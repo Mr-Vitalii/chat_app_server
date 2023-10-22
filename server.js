@@ -1,12 +1,15 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const chats = require("./data/data")
+const connectDB = require("./config/db");
+
+dotenv.config();
+connectDB();
 
 const cors = require('cors');
-
 const app = express();
 app.use(cors());
-// dotenv.config();
+
 
 // const PORT = process.env.PORT;
 
