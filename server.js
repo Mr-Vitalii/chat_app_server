@@ -2,32 +2,32 @@ const express = require("express");
 const dotenv = require("dotenv");
 const chats = require("./data/data")
 const connectDB = require("./config/db");
+const userRoutes = require("./routes/userRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 dotenv.config();
 connectDB();
 
 const cors = require('cors');
 const app = express();
+
+app.use(express.json());
 app.use(cors());
 
 
-// const PORT = process.env.PORT;
-
-PORT = 5000
+const PORT = process.env.PORT || 5000;
 
 app.get("/", (req, res) => {
     res.json("API Running!");
 });
 
-app.use("/api/chat", (req, res) => {
-    console.log(req);
-    res.send(chats);
-});
+app.use("/api/user", userRoutes)
+app.use("/api/chat", chatRoutes);
 
 
-app.use((req, res) => {
-    res.status(404).json({ message: 'Not found' })
-})
+app.use(notFound);
+app.use(errorHandler);
 
 app.use((err, req, res, next) => {
     const { status = 500, message = "Server error" } = err;
