@@ -1,6 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const chats = require("./data/data")
+
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
@@ -14,9 +14,9 @@ connectDB();
 const cors = require('cors');
 const app = express();
 
-app.use(express.json());
 app.use(cors());
-
+app.use(express.json());
+app.use(express.static("public"))
 
 const PORT = process.env.PORT || 5000;
 
@@ -33,21 +33,24 @@ app.use("/api/notification", notificationRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-app.use((err, req, res, next) => {
-    const { status = 500, message = "Server error" } = err;
-    res.status(status).json({ message })
-})
-
 
 const server = app.listen(PORT, () => {
     console.log(`Server running on PORT ${PORT}...`);
 });
 
+app.use((req, res) => {
+    res.status(404).json({ message: 'Not found' })
+})
+
+app.use((err, req, res, next) => {
+    const { status = 500, message = "Server error" } = err;
+    res.status(status).json({ message })
+})
+
 const io = require("socket.io")(server, {
     pingTimeout: 60000,
     cors: {
         origin: "http://localhost:3000",
-        // credentials: true,
     },
 });
 

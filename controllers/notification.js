@@ -5,12 +5,8 @@ const User = require("../models/userModel");
 const Chat = require("../models/chatModel");
 
 
-
 const sendNotification = asyncHandler(async (req, res) => {
     const { content, chatId } = req.body;
-
-    // console.log(content);
-    // console.log(chatId.users);
 
     if (!chatId) {
         console.log("Invalid data passed into request");
@@ -23,8 +19,6 @@ const sendNotification = asyncHandler(async (req, res) => {
         chat: chatId,
         participants: chatId.users
     };
-
-    // console.log(newNotification);
 
     try {
         var notification = await Notifications.create(newNotification);

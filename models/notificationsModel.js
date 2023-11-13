@@ -7,7 +7,6 @@ const notificationSchema = mongoose.Schema(
         content: { type: String, trim: true },
         chat: { type: Object },
         participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-        // participants: { type: Array },
         readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     },
     { timestamps: true }

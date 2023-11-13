@@ -2,9 +2,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const generateToken = require("../config/generateToken");
 
-
 const { HttpError, cloudinary } = require("../helpers");
-
 
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
@@ -60,9 +58,6 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 
-
-//*@route           GET /api/users?search=
-
 const allUsers = asyncHandler(async (req, res) => {
 
     const keyword = req.query.search ? {
@@ -76,8 +71,12 @@ const allUsers = asyncHandler(async (req, res) => {
     res.send(users);
 });
 
-const updateAvatar = async (req, res) => {
+
+
+const updateAvatar = asyncHandler(async (req, res) => {
     const { _id } = req.user;
+
+    console.log(_id);
 
     const options = {
         folder: `chat_app/userAvatar/${_id}`,
@@ -88,15 +87,23 @@ const updateAvatar = async (req, res) => {
         if (error) {
             throw HttpError(500, "Upload failed");
         }
+
         const avatarURL = result.secure_url;
 
         if (!avatarURL) {
             throw HttpError(500, "Upload failed");
         }
-        await User.findByIdAndUpdate(_id, { avatarURL });
-        return res.status(200).json({ avatarURL });
+        await User.findByIdAndUpdate(_id, { pic: avatarURL });
+        return res.status(200).json({ pic: avatarURL });
 
     }).end(req.file.buffer);
-}
 
-module.exports = { registerUser, loginUser, allUsers };
+});
+
+
+module.exports = {
+    registerUser,
+    loginUser,
+    allUsers,
+    updateAvatar
+};
